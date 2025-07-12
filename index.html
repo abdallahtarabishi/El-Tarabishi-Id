@@ -1,17 +1,16 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>بطاقتي الطلابية - El Tarabishi</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet" />
+  <meta charset="UTF-8">
+  <title>بطاقتي الطلابية - مبادرة El Tarabishi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Cairo', sans-serif;
-      background: linear-gradient(135deg, #1e1e2f, #2c2c3f);
-      padding: 30px;
+      background: linear-gradient(135deg, #1c1c2b, #2a2a40);
+      color: white;
       text-align: center;
-      color: #fff;
+      padding: 30px;
       direction: rtl;
     }
 
@@ -19,205 +18,65 @@
       background: #2f2f48;
       padding: 30px;
       border-radius: 20px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
-      display: inline-block;
       max-width: 400px;
-      width: 100%;
-      margin-bottom: 30px;
+      margin: auto;
+      box-shadow: 0 0 15px rgba(0,0,0,0.5);
     }
 
     .form-container input,
     .form-container select {
-      padding: 10px;
-      margin-top: 5px;
-      margin-bottom: 15px;
       width: 100%;
-      border: 1px solid #666;
+      margin: 10px 0;
+      padding: 10px;
       border-radius: 10px;
-      font-size: 16px;
+      border: none;
       background-color: #444;
-      color: #fff;
+      color: white;
     }
 
     .form-container button {
-      padding: 12px 24px;
-      background-color: #4CAF50;
-      color: white;
+      padding: 10px 20px;
+      background: #4CAF50;
       border: none;
+      color: white;
       border-radius: 10px;
       cursor: pointer;
       font-size: 16px;
     }
 
     .form-container button:hover {
-      background-color: #43a047;
-    }
-
-    .id-card {
-      background: #2e2e3e;
-      border: 2px solid #4CAF50;
-      border-radius: 15px;
-      padding: 20px;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: flex-start;
-      max-width: 500px;
-      margin: 30px auto;
-      color: #fff;
-    }
-
-    .id-card img {
-      width: 100px;
-      height: 100px;
-      object-fit: cover;
-      border-radius: 10px;
-      border: 3px solid #4CAF50;
-      margin-right: 20px;
-    }
-
-    .id-info {
-      text-align: right;
-      flex: 1;
-    }
-
-    .id-info .logo {
-      font-weight: bold;
-      font-size: 24px;
-      color: #4CAF50;
-      margin-bottom: 15px;
-      text-align: center;
-    }
-
-    .id-info h3,
-    .id-info p {
-      margin: 4px 0;
-      color: #fff;
-    }
-
-    #downloadBtn {
-      margin-top: 20px;
-      background-color: #2196F3;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-
-    #downloadBtn:hover {
-      background-color: #1976D2;
-    }
-
-    .success-msg {
-      margin-top: 20px;
-      color: #8BC34A;
-      font-weight: bold;
+      background: #45a049;
     }
   </style>
 </head>
 <body>
   <div class="form-container">
     <h2>إنشاء بطاقة الطالب</h2>
-    <form id="studentForm">
-      <label>الاسم الكامل:<br><input type="text" id="name" required></label><br>
-      <label>المرحلة التعليمية:<br>
-        <select id="education" required>
-          <option value="">-- اختر المرحلة --</option>
-          <option value="ابتدائية">ابتدائية</option>
-          <option value="إعدادية">إعدادية</option>
-          <option value="ثانوية">ثانوية</option>
-          <option value="كلية">كلية</option>
-          <option value="فري لانسر">فري لانسر</option>
-        </select>
-      </label><br>
-      <label>رقم الهاتف:<br><input type="number" id="phone" required></label><br>
-      <label>صورة شخصية:<br><input type="file" id="photo" accept="image/*" required></label><br>
-      <button type="submit">عرض البطاقة</button>
+    <form action="https://formsubmit.co/3bdallah7assan123@gmail.com" method="POST" enctype="multipart/form-data">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_template" value="table">
+      
+      <label>الاسم الكامل:</label>
+      <input type="text" name="name" required>
+
+      <label>المرحلة التعليمية:</label>
+      <select name="education" required>
+        <option value="">-- اختر المرحلة --</option>
+        <option value="ابتدائية">ابتدائية</option>
+        <option value="إعدادية">إعدادية</option>
+        <option value="ثانوية">ثانوية</option>
+        <option value="كلية">كلية</option>
+        <option value="فري لانسر">فري لانسر</option>
+      </select>
+
+      <label>رقم الهاتف:</label>
+      <input type="number" name="phone" required>
+
+      <label>صورة شخصية:</label>
+      <input type="file" name="photo" accept="image/*">
+
+      <button type="submit">إرسال البيانات</button>
     </form>
-    <div class="success-msg" id="msg"></div>
   </div>
-
-  <div id="cardOutput"></div>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script>
-    const form = document.getElementById('studentForm');
-    const msg = document.getElementById('msg');
-
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-
-      const name = document.getElementById('name').value;
-      const education = document.getElementById('education').value;
-      const phone = document.getElementById('phone').value;
-      const photoInput = document.getElementById('photo');
-
-      if (!photoInput.files.length) {
-        msg.innerText = "❌ من فضلك قم بإرفاق صورة.";
-        return;
-      }
-
-      const photo = photoInput.files[0];
-      const studentId = Math.floor(100000 + Math.random() * 900000);
-
-      const reader = new FileReader();
-
-      reader.onload = function(e) {
-        const cardHTML = `
-          <div class="id-card" id="studentCard">
-            <img src="${e.target.result}" alt="student photo">
-            <div class="id-info">
-              <div class="logo">مبادرة El Tarabishi</div>
-              <h3>${name}</h3>
-              <p>📘 المرحلة التعليمية: ${education}</p>
-              <p>📱 رقم الهاتف: ${phone}</p>
-              <p>🆔 ID: ${studentId}</p>
-            </div>
-          </div>
-          <button id="downloadBtn">تحميل البطاقة</button>
-        `;
-        document.getElementById('cardOutput').innerHTML = cardHTML;
-
-        const downloadButton = document.getElementById('downloadBtn');
-        downloadButton.addEventListener('click', function() {
-          const card = document.getElementById('studentCard');
-          html2canvas(card, { scale: 2 }).then(canvas => {
-            const link = document.createElement('a');
-            link.download = 'بطاقة_الطالب.png';
-            link.href = canvas.toDataURL('image/png');
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-          });
-        });
-
-        // إرسال البيانات إلى Google Sheet
-        fetch('https://script.google.com/macros/s/AKfycbyMMemRcllF8DsSkfOcgtCPUmjOkvvNu-CtRU87vjUFa3RsLT_YJkKh4duC3RyhyqU/exec', {
-          method: 'POST',
-          body: JSON.stringify({
-            id: studentId,
-            name: name,
-            education: education,
-            phone: phone
-          }),
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
-        .then(response => response.text())
-        .then(data => {
-          msg.innerText = "✅ تم التسجيل بنجاح!";
-        })
-        .catch(error => {
-          msg.innerText = "❌ حصل خطأ أثناء الإرسال.";
-          console.error('Error:', error);
-        });
-      };
-
-      reader.readAsDataURL(photo);
-    });
-  </script>
 </body>
 </html>
