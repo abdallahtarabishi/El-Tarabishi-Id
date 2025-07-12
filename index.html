@@ -47,15 +47,23 @@
     .form-container button:hover {
       background: #45a049;
     }
+
+    .success-msg {
+      color: #8BC34A;
+      font-weight: bold;
+      margin-top: 15px;
+    }
   </style>
 </head>
 <body>
+
   <div class="form-container">
     <h2>إنشاء بطاقة الطالب</h2>
-    <form action="https://formsubmit.co/3bdallah7assan123@gmail.com" method="POST" enctype="multipart/form-data">
+    <form action="https://formsubmit.co/youremail@example.com" method="POST" enctype="multipart/form-data">
+      <!-- استبدل الإيميل هنا -->
       <input type="hidden" name="_captcha" value="false">
       <input type="hidden" name="_template" value="table">
-      
+
       <label>الاسم الكامل:</label>
       <input type="text" name="name" required>
 
@@ -77,6 +85,11 @@
 
       <button type="submit">إرسال البيانات</button>
     </form>
+
+    <div class="success-msg">
+      سيتم إرسال بياناتك مباشرة عبر الإيميل ❤️
+    </div>
   </div>
+
 </body>
 </html>
