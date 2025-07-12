@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title> مبادرة El Tarabishi</title>
+  <title>El Tarabishi ID Generator</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
@@ -115,6 +115,12 @@
       font-weight: bold;
     }
 
+    .note {
+      margin-bottom: 15px;
+      font-size: 15px;
+      color: #f0f0a8;
+    }
+
     @media (max-width: 600px) {
       .id-card {
         width: 90%;
@@ -124,7 +130,8 @@
 </head>
 <body>
   <div class="form-container">
-    <h2>El Tarabishi ID Generator</h2>
+    <h2>Create Your Own ID</h2>
+    <p class="note">✨ خليك مميز واطبع بطاقتك الشخصية بنفسك!</p>
     <form id="studentForm">
       <label>الاسم الكامل:<br><input type="text" id="name" required></label><br>
       <label>المرحلة التعليمية:<br>
@@ -186,7 +193,6 @@
         `;
         document.getElementById('cardOutput').innerHTML = cardHTML;
 
-        // تحميل البطاقة كصورة
         document.getElementById('downloadBtn').addEventListener('click', function() {
           const card = document.getElementById('studentCard');
           html2canvas(card, { scale: 2 }).then(canvas => {
