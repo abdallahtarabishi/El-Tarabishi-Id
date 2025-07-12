@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>بطاقتي الطلابية - مبادرة El Tarabishi</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
   <style>
@@ -13,41 +13,42 @@
       text-align: center;
       direction: rtl;
       color: #fff;
+      margin: 0;
     }
 
     .form-container {
       background: #2f2f48;
-      padding: 30px;
+      padding: 25px;
       border-radius: 20px;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
-      display: inline-block;
       max-width: 400px;
-      width: 100%;
-      margin-bottom: 30px;
+      margin: auto;
     }
 
-    input, select {
-      width: 100%;
+    .form-container input,
+    .form-container select {
       padding: 10px;
-      margin: 10px 0;
+      margin: 5px 0 15px;
+      width: 100%;
+      border: 1px solid #666;
       border-radius: 10px;
-      border: none;
+      font-size: 16px;
       background-color: #444;
       color: #fff;
     }
 
-    button {
+    .form-container button {
+      padding: 12px 24px;
       background-color: #4CAF50;
       color: white;
       border: none;
-      padding: 12px 24px;
-      font-size: 16px;
-      cursor: pointer;
       border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
     }
 
-    button:hover {
-      background-color: #45a049;
+    .form-container button:hover {
+      background-color: #43a047;
     }
 
     .id-card {
@@ -56,12 +57,11 @@
       border-radius: 15px;
       padding: 20px;
       display: flex;
-      flex-direction: row-reverse;
+      flex-direction: column;
       align-items: center;
-      justify-content: space-between;
-      max-width: 500px;
-      margin: 20px auto;
-      flex-wrap: wrap;
+      max-width: 320px;
+      margin: 30px auto;
+      color: #fff;
     }
 
     .id-card img {
@@ -70,18 +70,23 @@
       object-fit: cover;
       border-radius: 10px;
       border: 3px solid #4CAF50;
-      margin-left: 20px;
+      margin: 15px 0;
     }
 
     .id-info {
-      flex: 1;
-      text-align: right;
-      color: white;
+      text-align: center;
+    }
+
+    .logo {
+      font-weight: bold;
+      font-size: 24px;
+      color: #4CAF50;
     }
 
     .id-info h3 {
       margin: 5px 0;
-      font-size: 20px;
+      font-size: 18px;
+      font-weight: bold;
     }
 
     .id-info p {
@@ -89,44 +94,39 @@
       font-size: 14px;
     }
 
-    .id-info .logo {
-      font-weight: bold;
-      font-size: 22px;
-      color: #4CAF50;
-      text-align: center;
-    }
-
     #downloadBtn {
       margin-top: 15px;
       background-color: #2196F3;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
     }
 
     #downloadBtn:hover {
       background-color: #1976D2;
     }
 
-    @media screen and (max-width: 600px) {
+    .success-msg {
+      margin-top: 20px;
+      color: #8BC34A;
+      font-weight: bold;
+    }
+
+    @media (max-width: 600px) {
       .id-card {
-        flex-direction: column;
-        text-align: center;
-      }
-
-      .id-card img {
-        margin: 0 auto 15px;
-      }
-
-      .id-info {
-        text-align: center;
+        width: 90%;
       }
     }
   </style>
 </head>
 <body>
-
   <div class="form-container">
     <h2>إنشاء بطاقة الطالب</h2>
     <form id="studentForm">
-      <label>الاسم الكامل:<br><input type="text" id="name" required></label>
+      <label>الاسم الكامل:<br><input type="text" id="name" required></label><br>
       <label>المرحلة التعليمية:<br>
         <select id="education" required>
           <option value="">-- اختر المرحلة --</option>
@@ -136,12 +136,12 @@
           <option value="كلية">كلية</option>
           <option value="فري لانسر">فري لانسر</option>
         </select>
-      </label>
-      <label>رقم الهاتف:<br><input type="number" id="phone" required></label>
-      <label>صورة شخصية:<br><input type="file" id="photo" accept="image/*" required></label>
-      <button type="submit">إرسال البيانات و عرض البطاقة</button>
+      </label><br>
+      <label>رقم الهاتف:<br><input type="number" id="phone" required></label><br>
+      <label>صورة شخصية:<br><input type="file" id="photo" accept="image/*" required></label><br>
+      <button type="submit">إرسال البيانات وعرض البطاقة</button>
     </form>
-    <div id="msg"></div>
+    <div class="success-msg" id="msg"></div>
   </div>
 
   <div id="cardOutput"></div>
@@ -151,30 +151,31 @@
     const form = document.getElementById('studentForm');
     const msg = document.getElementById('msg');
 
-    form.addEventListener('submit', function (e) {
+    form.addEventListener('submit', function(e) {
       e.preventDefault();
 
       const name = document.getElementById('name').value;
       const education = document.getElementById('education').value;
       const phone = document.getElementById('phone').value;
       const photoInput = document.getElementById('photo');
-      const studentId = Math.floor(100000 + Math.random() * 900000);
 
       if (!photoInput.files.length) {
-        msg.innerText = "❌ من فضلك ارفع صورة.";
+        msg.innerText = "❌ من فضلك قم بإرفاق صورة.";
         return;
       }
 
       const photo = photoInput.files[0];
-      const reader = new FileReader();
+      const studentId = Math.floor(100000 + Math.random() * 900000);
 
-      reader.onload = function (e) {
-        const imgData = e.target.result;
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const imgData = event.target.result;
+
         const cardHTML = `
           <div class="id-card" id="studentCard">
+            <div class="logo">مبادرة El Tarabishi</div>
             <img src="${imgData}" alt="Student Photo" />
             <div class="id-info">
-              <div class="logo">مبادرة El Tarabishi</div>
               <h3>${name}</h3>
               <p>📘 المرحلة التعليمية: ${education}</p>
               <p>📱 رقم الهاتف: ${phone}</p>
@@ -185,37 +186,18 @@
         `;
         document.getElementById('cardOutput').innerHTML = cardHTML;
 
-        document.getElementById('downloadBtn').addEventListener('click', function () {
+        // تحميل البطاقة كصورة
+        document.getElementById('downloadBtn').addEventListener('click', function() {
           const card = document.getElementById('studentCard');
           html2canvas(card, { scale: 2 }).then(canvas => {
             const link = document.createElement('a');
             link.download = 'بطاقة_الطالب.png';
             link.href = canvas.toDataURL('image/png');
-            document.body.appendChild(link);
             link.click();
-            document.body.removeChild(link);
           });
         });
 
-        // إرسال البيانات + الصورة لـ FormSubmit
-        const formData = new FormData();
-        formData.append("name", name);
-        formData.append("education", education);
-        formData.append("phone", phone);
-        formData.append("id", studentId);
-        formData.append("photo", photo);
-
-        fetch("https://formsubmit.co/YOUR_EMAIL_HERE", {
-          method: "POST",
-          body: formData
-        })
-          .then(response => {
-            msg.innerText = "✅ تم إرسال البيانات بنجاح!";
-          })
-          .catch(error => {
-            msg.innerText = "❌ حصل خطأ أثناء الإرسال.";
-            console.error(error);
-          });
+        msg.innerText = "✅ تم إنشاء البطاقة بنجاح!";
       };
 
       reader.readAsDataURL(photo);
