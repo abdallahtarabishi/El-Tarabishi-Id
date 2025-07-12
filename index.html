@@ -23,8 +23,7 @@
       box-shadow: 0 0 15px rgba(0,0,0,0.5);
     }
 
-    .form-container input,
-    .form-container select {
+    input, select {
       width: 100%;
       margin: 10px 0;
       padding: 10px;
@@ -34,7 +33,7 @@
       color: white;
     }
 
-    .form-container button {
+    button {
       padding: 10px 20px;
       background: #4CAF50;
       border: none;
@@ -44,14 +43,71 @@
       font-size: 16px;
     }
 
-    .form-container button:hover {
+    button:hover {
       background: #45a049;
     }
 
-    .success-msg {
-      color: #8BC34A;
+    .id-card {
+      background: #2e2e3e;
+      border: 2px solid #4CAF50;
+      border-radius: 15px;
+      padding: 20px;
+      display: flex;
+      flex-direction: row-reverse;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 500px;
+      margin: 30px auto;
+      color: #fff;
+    }
+
+    .id-card img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 3px solid #4CAF50;
+    }
+
+    .id-info {
+      text-align: right;
+      flex: 1;
+      padding-right: 15px;
+    }
+
+    .id-info .logo {
       font-weight: bold;
-      margin-top: 15px;
+      font-size: 22px;
+      color: #4CAF50;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .id-info h3 {
+      margin: 5px 0;
+      font-size: 18px;
+      color: white;
+    }
+
+    .id-info p {
+      margin: 3px 0;
+      font-size: 14px;
+      color: white;
+    }
+
+    #downloadBtn {
+      margin-top: 20px;
+      background-color: #2196F3;
+    }
+
+    #downloadBtn:hover {
+      background-color: #1976D2;
+    }
+
+    #msg {
+      color: #8BC34A;
+      margin-top: 10px;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -59,16 +115,15 @@
 
   <div class="form-container">
     <h2>إنشاء بطاقة الطالب</h2>
-    <form action="https://formsubmit.co/youremail@example.com" method="POST" enctype="multipart/form-data">
-      <!-- استبدل الإيميل هنا -->
+    <form id="studentForm">
       <input type="hidden" name="_captcha" value="false">
       <input type="hidden" name="_template" value="table">
 
       <label>الاسم الكامل:</label>
-      <input type="text" name="name" required>
+      <input type="text" id="name" name="name" required>
 
       <label>المرحلة التعليمية:</label>
-      <select name="education" required>
+      <select id="education" name="education" required>
         <option value="">-- اختر المرحلة --</option>
         <option value="ابتدائية">ابتدائية</option>
         <option value="إعدادية">إعدادية</option>
@@ -78,18 +133,92 @@
       </select>
 
       <label>رقم الهاتف:</label>
-      <input type="number" name="phone" required>
+      <input type="number" id="phone" name="phone" required>
 
       <label>صورة شخصية:</label>
-      <input type="file" name="photo" accept="image/*">
+      <input type="file" id="photo" accept="image/*" required>
 
-      <button type="submit">إرسال البيانات</button>
+      <button type="submit">إرسال البيانات وعرض البطاقة</button>
     </form>
 
-    <div class="success-msg">
-      سيتم إرسال بياناتك مباشرة عبر الإيميل ❤️
-    </div>
+    <div id="msg"></div>
   </div>
+
+  <div id="cardOutput"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script>
+    const form = document.getElementById("studentForm");
+    const msg = document.getElementById("msg");
+    const output = document.getElementById("cardOutput");
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value;
+      const education = document.getElementById("education").value;
+      const phone = document.getElementById("phone").value;
+      const photoInput = document.getElementById("photo");
+
+      if (!photoInput.files.length) {
+        msg.innerText = "❌ من فضلك قم بإرفاق صورة.";
+        return;
+      }
+
+      const studentId = Math.floor(100000 + Math.random() * 900000);
+      const reader = new FileReader();
+
+      reader.onload = function (event) {
+        const cardHTML = `
+          <div class="id-card" id="studentCard">
+            <img src="${event.target.result}" alt="صورة الطالب">
+            <div class="id-info">
+              <div class="logo">مبادرة El Tarabishi</div>
+              <h3>${name}</h3>
+              <p>📘 المرحلة: ${education}</p>
+              <p>📱 الهاتف: ${phone}</p>
+              <p>🆔 ID: ${studentId}</p>
+            </div>
+          </div>
+          <button id="downloadBtn">تحميل البطاقة كصورة</button>
+        `;
+        output.innerHTML = cardHTML;
+
+        const downloadBtn = document.getElementById("downloadBtn");
+        downloadBtn.addEventListener("click", function () {
+          const card = document.getElementById("studentCard");
+          html2canvas(card, { scale: 2 }).then(canvas => {
+            const link = document.createElement("a");
+            link.download = "بطاقة_الطالب.png";
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+          });
+        });
+
+        // send form using FormSubmit silently
+        fetch("https://formsubmit.co/ajax/3bdallah7assan123@gmail.com", {
+          method: "POST",
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: name,
+            education: education,
+            phone: phone,
+            id: studentId
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          msg.innerText = "✅ تم الإرسال بنجاح!";
+        })
+        .catch(err => {
+          msg.innerText = "❌ حصل خطأ أثناء الإرسال.";
+          console.error(err);
+        });
+      };
+
+      reader.readAsDataURL(photoInput.files[0]);
+    });
+  </script>
 
 </body>
 </html>
