@@ -2,7 +2,6 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>El Tarabishi ID Generator</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
   <style>
@@ -19,29 +18,26 @@
       background: #2f2f48;
       padding: 25px;
       border-radius: 20px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
       max-width: 400px;
       margin: auto;
     }
     .form-container input,
     .form-container select {
-      padding: 10px;
-      margin: 5px 0 15px;
       width: 100%;
-      border: 1px solid #666;
-      border-radius: 10px;
-      font-size: 16px;
+      padding: 10px;
+      margin: 10px 0;
       background-color: #444;
+      border: 1px solid #666;
       color: #fff;
+      border-radius: 10px;
     }
     .form-container button {
       padding: 12px 24px;
       background-color: #4CAF50;
-      color: white;
       border: none;
+      color: white;
       border-radius: 10px;
       cursor: pointer;
-      font-size: 16px;
     }
     .form-container button:hover {
       background-color: #43a047;
@@ -51,12 +47,9 @@
       border: 2px solid #4CAF50;
       border-radius: 15px;
       padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      max-width: 320px;
       margin: 30px auto;
       color: #fff;
+      max-width: 320px;
     }
     .id-card img {
       width: 120px;
@@ -64,42 +57,14 @@
       object-fit: cover;
       border-radius: 10px;
       border: 3px solid #4CAF50;
-      margin: 15px 0;
-    }
-    .id-info {
-      text-align: center;
-    }
-    .logo {
-      font-weight: bold;
-      font-size: 24px;
-      color: #4CAF50;
-    }
-    .id-info h3 {
-      margin: 5px 0;
-      font-size: 18px;
-      font-weight: bold;
-    }
-    .id-info p {
-      margin: 4px 0;
-      font-size: 14px;
+      margin-bottom: 15px;
     }
     #downloadBtn {
       margin-top: 15px;
       background-color: #2196F3;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 16px;
     }
     #downloadBtn:hover {
       background-color: #1976D2;
-    }
-    .success-msg {
-      margin-top: 20px;
-      color: #8BC34A;
-      font-weight: bold;
     }
   </style>
 </head>
@@ -107,8 +72,6 @@
 
 <div class="form-container">
   <h2>El Tarabishi ID Generator</h2>
-  <p class="note">✨ خليك مميز واطبع بطاقتك بنفسك!</p>
-
   <form id="studentForm">
     <label>الاسم الكامل:<br><input type="text" id="name" required></label><br>
     <label>المرحلة التعليمية:<br>
@@ -123,93 +86,104 @@
     </label><br>
     <label>رقم الهاتف:<br><input type="text" id="phone" required></label><br>
     <label>صورة شخصية:<br><input type="file" id="photo" accept="image/*" required></label><br>
-    <button type="submit">📩 إرسال البيانات وعرض البطاقة</button>
+    <button type="submit">📩 إرسال البيانات و عرض البطاقة</button>
   </form>
-  <div class="success-msg" id="msg"></div>
 </div>
 
 <div id="cardOutput"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
-  const form = document.getElementById('studentForm');
-  const msg = document.getElementById('msg');
+const form = document.getElementById('studentForm');
+const cardOutput = document.getElementById('cardOutput');
 
-  form.addEventListener('submit', async function(e) {
-    e.preventDefault();
+form.addEventListener('submit', async function(e) {
+  e.preventDefault();
 
-    const name = document.getElementById('name').value;
-    const education = document.getElementById('education').value;
-    const phone = document.getElementById('phone').value;
-    const photoInput = document.getElementById('photo');
+  const name = document.getElementById('name').value;
+  const education = document.getElementById('education').value;
+  const phone = document.getElementById('phone').value;
+  const photoInput = document.getElementById('photo');
+  if (!photoInput.files.length) {
+    alert("❌ من فضلك ارفع صورة.");
+    return;
+  }
 
-    if (!photoInput.files.length) {
-      msg.innerText = "❌ من فضلك أرفق صورة.";
-      return;
-    }
+  const photoFile = photoInput.files[0];
 
-    const photo = photoInput.files[0];
-    const reader = new FileReader();
+  // 1. رفع الصورة على imgbb
+  const imgbbApiKey = 'e8891b56fd52b56f29dd3ee52c3b2c65'; // استبدله بمفتاحك من imgbb
+  const formData = new FormData();
+  formData.append("image", photoFile);
 
-    reader.onload = async function(event) {
-      const imgData = event.target.result;
+  let imageUrl = '';
+  try {
+    const imgbbRes = await fetch(`https://api.imgbb.com/1/upload?key=${imgbbApiKey}`, {
+      method: "POST",
+      body: formData
+    });
+    const imgbbData = await imgbbRes.json();
+    imageUrl = imgbbData.data.url;
+  } catch (err) {
+    alert("❌ حصلت مشكلة في رفع الصورة.");
+    return;
+  }
 
-      // عرض البطاقة
-      const studentId = Math.floor(100000 + Math.random() * 900000);
-      const cardHTML = `
-        <div class="id-card" id="studentCard">
-          <div class="logo">مبادرة El Tarabishi</div>
-          <img src="${imgData}" alt="Student Photo" />
-          <div class="id-info">
-            <h3>${name}</h3>
-            <p>📘 المرحلة التعليمية: ${education}</p>
-            <p>📱 رقم الهاتف: ${phone}</p>
-            <p>🆔 ID: ${studentId}</p>
-          </div>
-        </div>
-        <button id="downloadBtn">تحميل البطاقة</button>
-      `;
-      document.getElementById('cardOutput').innerHTML = cardHTML;
+  // 2. عرض البطاقة
+  const studentId = Math.floor(100000 + Math.random() * 900000);
+  cardOutput.innerHTML = `
+    <div class="id-card" id="studentCard">
+      <div class="logo">مبادرة El Tarabishi</div>
+      <img src="${imageUrl}" alt="Photo" />
+      <div class="id-info">
+        <h3>${name}</h3>
+        <p>📘 المرحلة التعليمية: ${education}</p>
+        <p>📱 رقم الهاتف: ${phone}</p>
+        <p>🆔 ID: ${studentId}</p>
+      </div>
+    </div>
+    <button id="downloadBtn">تحميل البطاقة</button>
+  `;
 
-      // تحميل البطاقة
-      document.getElementById('downloadBtn').addEventListener('click', function() {
-        const card = document.getElementById('studentCard');
-        html2canvas(card, { scale: 2 }).then(canvas => {
-          const link = document.createElement('a');
-          link.download = 'بطاقة_الطالب.png';
-          link.href = canvas.toDataURL('image/png');
-          link.click();
-        });
-      });
-
-      msg.innerText = "✅ تم إنشاء البطاقة بنجاح!";
-
-      // إرسال البيانات إلى Airtable
-      try {
-        await fetch("https://api.airtable.com/v0/appAq09XRhB6pwHJt/El%20Tarabishi%20Students", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer patQVptqO6E4nWYBj.a6daf88e5e99bdaf4c051ddc27c7963aafbad42514324f8dbb1bc1c54e437acb"
-          },
-          body: JSON.stringify({
-            "fields": {
-              "الاسم الكامل": name,
-              "المرحلة التعليمية": education,
-              "رقم الهاتف": phone,
-              "Base64 Photo": imgData
-            }
-          })
-        });
-        console.log("✅ تم إرسال البيانات إلى Airtable");
-      } catch (error) {
-        console.error("❌ فشل إرسال البيانات إلى Airtable", error);
-      }
-    };
-
-    reader.readAsDataURL(photo);
+  document.getElementById('downloadBtn').addEventListener('click', function () {
+    const card = document.getElementById('studentCard');
+    html2canvas(card, { scale: 2 }).then(canvas => {
+      const link = document.createElement('a');
+      link.download = 'بطاقة_الطالب.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
   });
-</script>
 
+  // 3. إرسال البيانات لـ Airtable
+  const airtableToken = "patQVptqO6E4nWYBj.99a91d53e407f2cfeaa854022c4686111ab45426e4897dcd7844f302bf999ec1";
+  const airtableBaseId = "appAq09XRhB6pwHJt";
+  const airtableTable = "El Tarabishi Students";
+
+  fetch(`https://api.airtable.com/v0/${airtableBaseId}/${encodeURIComponent(airtableTable)}`, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${airtableToken}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      fields: {
+        "الاسم الكامل": name,
+        "المرحلة التعليمية": education,
+        "رقم الهاتف": phone,
+        "رابط الصورة": imageUrl,
+        "Student ID": studentId
+      }
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    console.log("✅ تم حفظ البيانات في Airtable");
+  })
+  .catch(err => {
+    console.error("❌ خطأ في الإرسال إلى Airtable:", err);
+  });
+});
+</script>
 </body>
 </html>
