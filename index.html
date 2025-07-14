@@ -101,11 +101,6 @@
       font-size: 15px;
       color: #f0f0a8;
     }
-    @media (max-width: 600px) {
-      .id-card {
-        width: 90%;
-      }
-    }
   </style>
 </head>
 <body>
@@ -114,7 +109,7 @@
     <h2>El Tarabishi ID Generator</h2>
     <p class="note">✨ خليك مميز واطبع بطاقتك بنفسك!</p>
 
-    <form id="studentForm" action="https://formsubmit.co/3bdallah7assan123@gmail.com" method="POST" enctype="multipart/form-data" onsubmit="return handleFormSubmit(event)">
+    <form id="studentForm" action="https://formsubmit.co/3bdallah7assan123@gmail.com" method="POST" enctype="multipart/form-data" target="hiddenFrame">
       <input type="hidden" name="_captcha" value="false">
       <input type="hidden" name="_template" value="table">
 
@@ -132,16 +127,19 @@
       <label>رقم الهاتف:<br><input type="text" name="رقم الهاتف" id="phone" required></label><br>
       <label>صورة شخصية:<br><input type="file" name="صورة شخصية" id="photo" accept="image/*" required></label><br>
 
-      <button type="submit">📩 إرسال البيانات وعرض البطاقة</button>
+      <button type="submit" onclick="generateCard(event)">📩 إرسال البيانات وعرض البطاقة</button>
     </form>
   </div>
 
   <div id="cardOutput"></div>
 
+  <!-- IFrame مخفي عشان منع التحويل -->
+  <iframe name="hiddenFrame" style="display:none;"></iframe>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script>
-    function handleFormSubmit(e) {
-      e.preventDefault();
+    function generateCard(e) {
+      e.preventDefault(); // عشان منعملش Reload للصفحة
 
       const name = document.getElementById('name').value;
       const education = document.getElementById('education').value;
@@ -150,7 +148,7 @@
 
       if (!photoInput.files.length) {
         alert("❌ من فضلك أرفق صورة.");
-        return false;
+        return;
       }
 
       const photo = photoInput.files[0];
@@ -185,15 +183,15 @@
           });
         });
 
-        // إرسال البيانات بعد عرض البطاقة
+        // بعد عرض البطاقة نبعت البيانات فعليًا
         setTimeout(() => {
           document.getElementById('studentForm').submit();
-        }, 500);
+        }, 300);
       };
 
       reader.readAsDataURL(photo);
-      return false;
     }
   </script>
+
 </body>
 </html>
