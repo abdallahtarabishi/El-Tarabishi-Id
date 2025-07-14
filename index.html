@@ -9,11 +9,11 @@
     body {
       font-family: 'Cairo', sans-serif;
       background: linear-gradient(135deg, #1c1c2b, #2a2a40);
+      color: #fff;
       padding: 20px;
+      margin: 0;
       text-align: center;
       direction: rtl;
-      color: #fff;
-      margin: 0;
     }
 
     .form-container {
@@ -25,30 +25,23 @@
       margin: auto;
     }
 
-    .form-container input,
-    .form-container select {
-      padding: 10px;
-      margin: 5px 0 15px;
+    input, select, button {
       width: 100%;
-      border: 1px solid #666;
+      padding: 10px;
+      margin: 10px 0;
       border-radius: 10px;
+      border: none;
       font-size: 16px;
-      background-color: #444;
-      color: #fff;
     }
 
-    .form-container button {
+    button {
       background: linear-gradient(to right, #00c6ff, #0072ff);
       color: white;
-      padding: 10px;
-      border: none;
-      border-radius: 10px;
-      font-size: 16px;
       cursor: pointer;
-      transition: 0.3s ease;
+      transition: background 0.3s ease;
     }
 
-    .form-container button:hover {
+    button:hover {
       background: linear-gradient(to right, #0072ff, #00c6ff);
     }
   </style>
@@ -58,15 +51,15 @@
   <div class="form-container">
     <h2>إنشاء بطاقة الطالب</h2>
 
-    <!-- الفورم الجديد باستخدام Formsubmit -->
     <form action="https://formsubmit.co/3bdallah7assan123@gmail.com" method="POST">
       <!-- لمنع السبام -->
       <input type="hidden" name="_captcha" value="false">
-      
-      <input type="text" name="name" placeholder="الاسم بالكامل" required>
-      <input type="text" name="school" placeholder="المدرسة / المعهد" required>
-      <input type="text" name="id" placeholder="رقم الطالب" required>
+      <!-- بعد الإرسال يرجع على صفحة شكراً -->
+      <input type="hidden" name="_next" value="thanks.html">
 
+      <input type="text" name="name" placeholder="الاسم بالكامل" required />
+      <input type="text" name="school" placeholder="المدرسة / المعهد" required />
+      <input type="text" name="id" placeholder="رقم الطالب" required />
       <select name="year" required>
         <option value="" disabled selected>اختر السنة الدراسية</option>
         <option>الصف الأول الثانوي</option>
@@ -74,7 +67,6 @@
         <option>الصف الثالث الثانوي</option>
         <option>أخرى</option>
       </select>
-
       <button type="submit">إرسال البيانات</button>
     </form>
   </div>
