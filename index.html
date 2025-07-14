@@ -44,6 +44,36 @@
     button:hover {
       background: linear-gradient(to right, #0072ff, #00c6ff);
     }
+
+    .card {
+      margin-top: 30px;
+      padding: 20px;
+      background: #3b3b5c;
+      border-radius: 15px;
+      display: none;
+    }
+
+    .card img {
+      max-width: 100%;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+
+    .download-btn {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background: #28a745;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .download-btn:hover {
+      background: #218838;
+    }
   </style>
 </head>
 <body>
@@ -51,25 +81,58 @@
   <div class="form-container">
     <h2>إنشاء بطاقة الطالب</h2>
 
-    <form action="https://formsubmit.co/3bdallah7assan123@gmail.com" method="POST">
-      <!-- لمنع السبام -->
-      <input type="hidden" name="_captcha" value="false">
-      <!-- بعد الإرسال يرجع على صفحة شكراً -->
-      <input type="hidden" name="_next" value="thanks.html">
-
-      <input type="text" name="name" placeholder="الاسم بالكامل" required />
-      <input type="text" name="school" placeholder="المدرسة / المعهد" required />
-      <input type="text" name="id" placeholder="رقم الطالب" required />
-      <select name="year" required>
+    <form id="idForm">
+      <input type="text" id="name" placeholder="الاسم بالكامل" required />
+      <input type="text" id="school" placeholder="المدرسة / المعهد" required />
+      <input type="text" id="idnum" placeholder="رقم الطالب" required />
+      <select id="year" required>
         <option value="" disabled selected>اختر السنة الدراسية</option>
         <option>الصف الأول الثانوي</option>
         <option>الصف الثاني الثانوي</option>
         <option>الصف الثالث الثانوي</option>
         <option>أخرى</option>
       </select>
-      <button type="submit">إرسال البيانات</button>
+      <input type="file" id="studentPhoto" accept="image/*" required />
+      <button type="submit">إرسال البيانات و عرض البطاقة</button>
     </form>
   </div>
+
+  <div class="card" id="card">
+    <img id="previewImage" src="#" alt="صورة الطالب" />
+    <h3 id="previewName"></h3>
+    <p id="previewSchool"></p>
+    <p id="previewID"></p>
+    <p id="previewYear"></p>
+    <a id="downloadLink" class="download-btn" download="student_card.png">تحميل البطاقة</a>
+  </div>
+
+  <script>
+    document.getElementById("idForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value;
+      const school = document.getElementById("school").value;
+      const idnum = document.getElementById("idnum").value;
+      const year = document.getElementById("year").value;
+      const photo = document.getElementById("studentPhoto").files[0];
+
+      if (photo) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          document.getElementById("previewImage").src = event.target.result;
+          document.getElementById("downloadLink").href = event.target.result;
+        };
+        reader.readAsDataURL(photo);
+      }
+
+      document.getElementById("previewName").textContent = `👤 الاسم: ${name}`;
+      document.getElementById("previewSchool").textContent = `🏫 المدرسة: ${school}`;
+      document.getElementById("previewID").textContent = `🆔 رقم الطالب: ${idnum}`;
+      document.getElementById("previewYear").textContent = `📘 السنة الدراسية: ${year}`;
+
+      document.getElementById("card").style.display = "block";
+    });
+  </script>
 
 </body>
 </html>
