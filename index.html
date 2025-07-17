@@ -111,7 +111,7 @@
       </select>
 
       <label for="phone">رقم الهاتف:</label>
-      <input type="tel" id="phone" name="رقم الهاتف" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required />
+      <input type="tel" id="phone" name="رقم الهاتف" required pattern="[0-9]{10,}" title="رقم الهاتف لازم يكون أرقام فقط و10 أرقام على الأقل" />
 
       <label for="photo">صورة شخصية:</label>
       <input type="file" id="photo" accept="image/*" required />
@@ -170,7 +170,6 @@
           });
         });
 
-        // إرسال البيانات عبر FormSubmit
         const formData = new FormData();
         formData.append("الاسم الكامل", name);
         formData.append("المرحلة التعليمية", education);
