@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>El Tarabishi ID Generator</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     body {
       font-family: 'Cairo', sans-serif;
@@ -35,19 +34,22 @@
       background-color: #444;
       color: #fff;
     }
-    button {
-      width: 100%;
-      padding: 12px;
+    .form-container button {
+      padding: 12px 24px;
       background-color: #4CAF50;
       color: white;
       border: none;
       border-radius: 10px;
       cursor: pointer;
-      font-size: 17px;
-      transition: background-color 0.3s ease;
+      font-size: 16px;
     }
-    button:hover {
+    .form-container button:hover {
       background-color: #43a047;
+    }
+    .note {
+      margin-bottom: 15px;
+      font-size: 15px;
+      color: #f0f0a8;
     }
     .id-card {
       background: #2e2e3e;
@@ -59,7 +61,7 @@
       align-items: center;
       max-width: 320px;
       margin: 30px auto;
-      text-align: center;
+      color: #fff;
     }
     .id-card img {
       width: 120px;
@@ -69,24 +71,15 @@
       border: 3px solid #4CAF50;
       margin: 15px 0;
     }
-    .id-info h3 {
-      margin: 5px 0;
-      font-size: 20px;
-    }
-    .id-info p {
-      margin: 4px 0;
-      font-size: 14px;
-    }
     #downloadBtn {
       margin-top: 15px;
       background-color: #2196F3;
       color: white;
       border: none;
-      padding: 12px 20px;
+      padding: 10px 20px;
       border-radius: 10px;
       cursor: pointer;
       font-size: 16px;
-      transition: background-color 0.3s ease;
     }
     #downloadBtn:hover {
       background-color: #1976D2;
@@ -96,32 +89,30 @@
 <body>
   <div class="form-container">
     <h2>El Tarabishi ID Generator</h2>
+    <p class="note">✨ خليك مميز واطبع بطاقتك بنفسك!</p>
     <form id="studentForm">
-      <label for="name">الاسم الكامل:</label>
-      <input type="text" id="name" name="الاسم الكامل" required />
-
-      <label for="education">المرحلة التعليمية:</label>
-      <select id="education" name="المرحلة التعليمية" required>
-        <option value="">-- اختر المرحلة --</option>
-        <option value="ابتدائية">ابتدائية</option>
-        <option value="إعدادية">إعدادية</option>
-        <option value="ثانوية">ثانوية</option>
-        <option value="كلية">كلية</option>
-        <option value="فري لانسر">فري لانسر</option>
-      </select>
-
-      <label for="phone">رقم الهاتف:</label>
-      <input type="tel" id="phone" name="رقم الهاتف" required pattern="[0-9]{10,}" title="رقم الهاتف لازم يكون أرقام فقط و10 أرقام على الأقل" />
-
-      <label for="photo">صورة شخصية:</label>
-      <input type="file" id="photo" accept="image/*" required />
-
+      <input type="hidden" name="_captcha" value="false" />
+      <input type="hidden" name="_template" value="table" />
+      <label>الاسم الكامل:<br /><input type="text" name="الاسم الكامل" id="name" required /></label><br />
+      <label>المرحلة التعليمية:<br />
+        <select name="المرحلة التعليمية" id="education" required>
+          <option value="">-- اختر المرحلة --</option>
+          <option value="ابتدائية">ابتدائية</option>
+          <option value="إعدادية">إعدادية</option>
+          <option value="ثانوية">ثانوية</option>
+          <option value="كلية">كلية</option>
+          <option value="فري لانسر">فري لانسر</option>
+        </select>
+      </label><br />
+      <label>رقم الهاتف:<br /><input type="text" name="رقم الهاتف" id="phone" required /></label><br />
+      <label>صورة شخصية:<br /><input type="file" id="photo" accept="image/*" required /></label><br />
       <button type="submit">📩 إرسال البيانات و عرض البطاقة</button>
     </form>
   </div>
 
   <div id="cardOutput"></div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script>
     const form = document.getElementById('studentForm');
 
@@ -135,14 +126,11 @@
 
       if (!photoInput.files.length) return alert("❌ من فضلك أرفق صورة");
 
-      if (!/^[0-9]{10,}$/.test(phone)) {
-        alert("📵 من فضلك أدخل رقم هاتف صحيح يحتوي على أرقام فقط ويكون 10 أرقام أو أكثر.");
-        return;
-      }
-
       const reader = new FileReader();
+
       reader.onload = function (event) {
         const imgData = event.target.result;
+
         const studentId = Math.floor(100000 + Math.random() * 900000);
 
         const cardHTML = `
@@ -158,6 +146,7 @@
           </div>
           <button id="downloadBtn">تحميل البطاقة</button>
         `;
+
         document.getElementById('cardOutput').innerHTML = cardHTML;
 
         document.getElementById('downloadBtn').addEventListener('click', function () {
@@ -170,6 +159,7 @@
           });
         });
 
+        // Send form to FormSubmit
         const formData = new FormData();
         formData.append("الاسم الكامل", name);
         formData.append("المرحلة التعليمية", education);
