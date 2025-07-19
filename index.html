@@ -1,95 +1,94 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <title>Upload Photo Form</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>نموذج رفع صورة</title>
   <style>
     body {
       font-family: 'Cairo', sans-serif;
-      direction: rtl;
-      background-color: #f9f9f9;
-      padding: 30px;
+      background: #f7f7f7;
       text-align: center;
+      padding: 40px;
     }
+
     form {
-      background: #fff;
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      display: inline-block;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      max-width: 500px;
+      margin: auto;
     }
-    input, button {
-      display: block;
-      margin: 15px auto;
-      padding: 10px;
-      font-size: 16px;
-      border-radius: 8px;
+
+    input, textarea, button {
+      width: 100%;
+      margin: 10px 0;
+      padding: 12px;
+      border-radius: 6px;
       border: 1px solid #ccc;
-      width: 80%;
+      font-size: 16px;
     }
+
     button {
-      background-color: #4CAF50;
+      background: #00aaff;
       color: white;
+      border: none;
       cursor: pointer;
     }
+
     button:hover {
-      background-color: #45a049;
-    }
-    .success {
-      color: green;
-    }
-    .error {
-      color: red;
+      background: #008ecc;
     }
   </style>
 </head>
 <body>
 
-  <h2>ارفع صورتك وبياناتك</h2>
+  <h2>نموذج إرسال البيانات والصورة</h2>
 
-  <form id="uploadForm">
-    <input type="text" name="name" placeholder="اسمك بالكامل" required />
-    <input type="file" name="photo" accept="image/*" required />
+  <form id="myForm">
+    <input type="text" name="name" placeholder="الاسم" required />
+    <input type="email" name="email" placeholder="البريد الإلكتروني" required />
+    <textarea name="message" placeholder="الرسالة" required></textarea>
+    <input type="file" name="image" id="imageFile" accept="image/*" required />
     <button type="submit">إرسال</button>
   </form>
 
-  <div id="status"></div>
-
   <script>
-    const form = document.getElementById("uploadForm");
-    const status = document.getElementById("status");
+    const form = document.getElementById("myForm");
 
-    form.addEventListener("submit", async (e) => {
+    form.addEventListener("submit", async function (e) {
       e.preventDefault();
 
-      const name = form.name.value;
-      const file = form.photo.files[0];
-      if (!file || !name) {
-        status.innerHTML = "<p class='error'>برجاء إدخال الاسم وتحميل صورة</p>";
-        return;
-      }
+      const formData = new FormData(form);
+      const file = document.getElementById("imageFile").files[0];
 
-      const formData = new FormData();
-      formData.append("name", name);
-      formData.append("photo", file);
+      // 1. رفع الصورة على Google Drive
+      const uploadResponse = await fetch("https://script.google.com/macros/s/AKfycbwL9X0MIVKKQW0SMA98sFumwQbQ4N17yHG7MzjOw-s8hQgf1iVDsM7x5uaoLf-u8nJd/exec", {
+        method: "POST",
+        body: formData
+      });
 
-      try {
-        status.innerHTML = "<p>جاري الإرسال...</p>";
+      const result = await uploadResponse.json();
+      const imageUrl = result.fileUrl;
 
-        const response = await fetch("https://script.google.com/macros/s/AKfycbwL9X0MIVKKQW0SMA98sFumwQbQ4N17yHG7MzjOw-s8hQgf1iVDsM7x5uaoLf-u8nJd/exec", {
-          method: "POST",
-          body: formData,
-        });
+      // 2. إرسال البيانات عبر FormSubmit
+      const emailForm = new FormData();
+      emailForm.append("name", formData.get("name"));
+      emailForm.append("email", formData.get("email"));
+      emailForm.append("message", `${formData.get("message")}\n\nرابط الصورة: ${imageUrl}`);
 
-        const result = await response.text();
-        status.innerHTML = "<p class='success'>تم الإرسال بنجاح!</p>";
-        form.reset();
-      } catch (error) {
-        console.error(error);
-        status.innerHTML = "<p class='error'>حدث خطأ أثناء الإرسال. حاول مرة أخرى.</p>";
-      }
+      await fetch("https://formsubmit.co/ajax/3bdallah7assan123@gmail.com", {
+        method: "POST",
+        headers: {
+          'Accept': 'application/json'
+        },
+        body: emailForm
+      });
+
+      alert("تم الإرسال بنجاح");
+      form.reset();
     });
   </script>
-
 </body>
 </html>
