@@ -1,85 +1,95 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>نموذج إرسال</title>
+  <meta charset="UTF-8">
+  <title>Upload Photo Form</title>
   <style>
     body {
       font-family: 'Cairo', sans-serif;
-      background-color: #f8f8f8;
-      padding: 20px;
       direction: rtl;
+      background-color: #f9f9f9;
+      padding: 30px;
+      text-align: center;
     }
     form {
-      background: white;
+      background: #fff;
       padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      max-width: 500px;
-      margin: auto;
+      border-radius: 15px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      display: inline-block;
     }
-    input, textarea {
-      width: 100%;
+    input, button {
+      display: block;
+      margin: 15px auto;
       padding: 10px;
-      margin-top: 10px;
-      border-radius: 6px;
+      font-size: 16px;
+      border-radius: 8px;
       border: 1px solid #ccc;
+      width: 80%;
     }
     button {
-      background-color: #28a745;
+      background-color: #4CAF50;
       color: white;
-      border: none;
-      padding: 10px;
-      border-radius: 6px;
       cursor: pointer;
-      margin-top: 10px;
     }
-    img {
-      max-width: 100%;
-      margin-top: 10px;
+    button:hover {
+      background-color: #45a049;
+    }
+    .success {
+      color: green;
+    }
+    .error {
+      color: red;
     }
   </style>
 </head>
 <body>
 
-<form action="https://formsubmit.co/3bdallah7assan123@gmail.com" method="POST" enctype="multipart/form-data">
-  <h2>إرسال رسالة مع صورة</h2>
+  <h2>ارفع صورتك وبياناتك</h2>
 
-  <label>الاسم</label>
-  <input type="text" name="name" required>
+  <form id="uploadForm">
+    <input type="text" name="name" placeholder="اسمك بالكامل" required />
+    <input type="file" name="photo" accept="image/*" required />
+    <button type="submit">إرسال</button>
+  </form>
 
-  <label>البريد الإلكتروني</label>
-  <input type="email" name="email" required>
+  <div id="status"></div>
 
-  <label>الرسالة</label>
-  <textarea name="message" rows="4" required></textarea>
+  <script>
+    const form = document.getElementById("uploadForm");
+    const status = document.getElementById("status");
 
-  <label>اختيار صورة</label>
-  <input type="file" id="imageInput" accept="image/*">
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-  <!-- هنحط الصورة هنا بعد تحويلها -->
-  <input type="hidden" name="image_base64" id="imageBase64Input">
-
-  <button type="submit">إرسال</button>
-</form>
-
-<script>
-  const imageInput = document.getElementById("imageInput");
-  const imageBase64Input = document.getElementById("imageBase64Input");
-
-  imageInput.addEventListener("change", function () {
-    const file = this.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = function () {
-        // نضيف الصورة كبيز64 في الرسالة
-        imageBase64Input.value = reader.result;
+      const name = form.name.value;
+      const file = form.photo.files[0];
+      if (!file || !name) {
+        status.innerHTML = "<p class='error'>برجاء إدخال الاسم وتحميل صورة</p>";
+        return;
       }
-      reader.readAsDataURL(file);
-    }
-  });
-</script>
+
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("photo", file);
+
+      try {
+        status.innerHTML = "<p>جاري الإرسال...</p>";
+
+        const response = await fetch("https://script.google.com/macros/s/AKfycbwL9X0MIVKKQW0SMA98sFumwQbQ4N17yHG7MzjOw-s8hQgf1iVDsM7x5uaoLf-u8nJd/exec", {
+          method: "POST",
+          body: formData,
+        });
+
+        const result = await response.text();
+        status.innerHTML = "<p class='success'>تم الإرسال بنجاح!</p>";
+        form.reset();
+      } catch (error) {
+        console.error(error);
+        status.innerHTML = "<p class='error'>حدث خطأ أثناء الإرسال. حاول مرة أخرى.</p>";
+      }
+    });
+  </script>
 
 </body>
 </html>
