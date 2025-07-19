@@ -2,41 +2,69 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>نموذج بطاقة الطالب</title>
+  <title>بطاقة الطالب - El Tarabishi</title>
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <style>
     body {
       font-family: 'Cairo', sans-serif;
-      direction: rtl;
+      background: #f7f7f7;
       padding: 20px;
+      direction: rtl;
+      text-align: center;
+    }
+    form {
+      background: white;
+      padding: 20px;
+      margin: 20px auto;
+      max-width: 400px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #ccc;
+    }
+    input, button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 16px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
     }
     .id-card {
-      border: 2px solid #000;
-      width: 300px;
-      padding: 10px;
-      text-align: center;
-      margin-bottom: 20px;
+      background: white;
+      padding: 15px;
+      margin: 20px auto;
+      border: 2px solid #007bff;
+      width: 320px;
+      border-radius: 10px;
     }
     .id-card img {
       width: 100%;
-      height: auto;
       max-height: 200px;
       object-fit: cover;
+      border-radius: 8px;
     }
     #downloadBtn {
-      margin-top: 10px;
+      margin-top: 15px;
+      background-color: #28a745;
     }
   </style>
 </head>
 <body>
 
-  <h2>توليد بطاقة طالب</h2>
+  <h2>نموذج تسجيل بطاقة طالب</h2>
+
   <form id="studentForm">
-    <input type="text" id="name" placeholder="الاسم الكامل" required><br>
-    <input type="text" id="education" placeholder="المرحلة التعليمية" required><br>
-    <input type="tel" id="phone" placeholder="رقم الهاتف" required><br>
-    <input type="file" id="photo" accept="image/*" required><br>
-    <button type="submit">توليد البطاقة + إرسال</button>
+    <input type="text" id="name" placeholder="الاسم الكامل" required>
+    <input type="text" id="education" placeholder="المرحلة التعليمية" required>
+    <input type="tel" id="phone" placeholder="رقم الهاتف" required>
+    <input type="file" id="photo" accept="image/*" required>
+    <button type="submit">توليد + إرسال</button>
   </form>
 
   <div id="cardOutput"></div>
@@ -53,7 +81,7 @@
       const phone = document.getElementById('phone').value.trim();
 
       if (!/^\d{10,}$/.test(phone)) {
-        alert("📵 من فضلك أدخل رقم هاتف صحيح يحتوي على أرقام فقط ويكون 10 أرقام أو أكثر.");
+        alert("📵 من فضلك أدخل رقم هاتف صحيح يحتوي على 10 أرقام أو أكثر.");
         return;
       }
 
@@ -64,8 +92,8 @@
 
         const cardHTML = `
           <div class="id-card" id="studentCard">
-            <div class="logo">مبادرة El Tarabishi</div>
-            <img src="${imgData}" alt="Student Photo" />
+            <div class="logo"><strong>مبادرة El Tarabishi</strong></div>
+            <img src="${imgData}" alt="صورة الطالب" />
             <div class="id-info">
               <h3>${name}</h3>
               <p>📘 المرحلة التعليمية: ${education}</p>
@@ -73,7 +101,7 @@
               <p>🆔 ID: ${studentId}</p>
             </div>
           </div>
-          <button id="downloadBtn">تحميل البطاقة</button>
+          <button id="downloadBtn">📥 تحميل البطاقة</button>
         `;
         document.getElementById('cardOutput').innerHTML = cardHTML;
 
@@ -87,11 +115,12 @@
           });
         });
 
+        // تجهيز البيانات للإرسال
         const formData = new FormData();
         formData.append("الاسم الكامل", name);
         formData.append("المرحلة التعليمية", education);
         formData.append("رقم الهاتف", phone);
-        formData.append("attachment", photoInput.files[0]); // ✅ تعديل اسم الحقل فقط هنا
+        formData.append("attachment", photoInput.files[0]); // ✅ ضروري يكون اسمه "attachment"
         formData.append("_captcha", "false");
         formData.append("_template", "table");
 
@@ -100,12 +129,15 @@
           body: formData
         }).then(response => {
           if (response.ok) {
-            console.log("✅ تم الإرسال على الإيميل");
+            console.log("✅ تم إرسال البيانات على الإيميل");
+            alert("✅ تم إرسال البيانات على الإيميل بنجاح");
           } else {
-            console.error("❌ في مشكلة في إرسال البيانات");
+            console.error("❌ فشل في الإرسال");
+            alert("❌ فشل في الإرسال");
           }
         }).catch(err => {
-          console.error("❌ حصل خطأ في الإرسال", err);
+          console.error("❌ حصل خطأ أثناء الإرسال", err);
+          alert("❌ حصل خطأ أثناء الإرسال");
         });
       };
 
