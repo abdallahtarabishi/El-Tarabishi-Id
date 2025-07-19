@@ -52,7 +52,6 @@
       const education = document.getElementById('education').value.trim();
       const phone = document.getElementById('phone').value.trim();
 
-      // تحقق من رقم الهاتف
       if (!/^\d{10,}$/.test(phone)) {
         alert("📵 من فضلك أدخل رقم هاتف صحيح يحتوي على أرقام فقط ويكون 10 أرقام أو أكثر.");
         return;
@@ -78,7 +77,6 @@
         `;
         document.getElementById('cardOutput').innerHTML = cardHTML;
 
-        // زر تحميل البطاقة
         document.getElementById('downloadBtn').addEventListener('click', function () {
           const card = document.getElementById('studentCard');
           html2canvas(card, { scale: 2 }).then(canvas => {
@@ -89,12 +87,11 @@
           });
         });
 
-        // تجهيز البيانات للإرسال
         const formData = new FormData();
         formData.append("الاسم الكامل", name);
         formData.append("المرحلة التعليمية", education);
         formData.append("رقم الهاتف", phone);
-        formData.append("photo", photoInput.files[0]); // ✅ اسم الحقل صح لإرسال الصورة كمرفق
+        formData.append("attachment", photoInput.files[0]); // ✅ تعديل اسم الحقل فقط هنا
         formData.append("_captcha", "false");
         formData.append("_template", "table");
 
