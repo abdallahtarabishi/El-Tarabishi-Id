@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>El Tarabishi ID Generator</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     body {
       font-family: 'Cairo', sans-serif;
@@ -34,16 +35,18 @@
       background-color: #444;
       color: #fff;
     }
-    .form-container button {
-      padding: 12px 24px;
+    button {
+      width: 100%;
+      padding: 12px;
       background-color: #4CAF50;
       color: white;
       border: none;
       border-radius: 10px;
       cursor: pointer;
-      font-size: 16px;
+      font-size: 17px;
+      transition: background-color 0.3s ease;
     }
-    .form-container button:hover {
+    button:hover {
       background-color: #43a047;
     }
     .id-card {
@@ -56,7 +59,7 @@
       align-items: center;
       max-width: 320px;
       margin: 30px auto;
-      color: #fff;
+      text-align: center;
     }
     .id-card img {
       width: 120px;
@@ -66,18 +69,9 @@
       border: 3px solid #4CAF50;
       margin: 15px 0;
     }
-    .id-info {
-      text-align: center;
-    }
-    .logo {
-      font-weight: bold;
-      font-size: 24px;
-      color: #4CAF50;
-    }
     .id-info h3 {
       margin: 5px 0;
-      font-size: 18px;
-      font-weight: bold;
+      font-size: 20px;
     }
     .id-info p {
       margin: 4px 0;
@@ -88,31 +82,26 @@
       background-color: #2196F3;
       color: white;
       border: none;
-      padding: 10px 20px;
+      padding: 12px 20px;
       border-radius: 10px;
       cursor: pointer;
       font-size: 16px;
+      transition: background-color 0.3s ease;
     }
     #downloadBtn:hover {
       background-color: #1976D2;
     }
-    .success-msg {
-      margin-top: 20px;
-      color: #8BC34A;
-      font-weight: bold;
-    }
   </style>
 </head>
 <body>
+  <div class="form-container">
+    <h2>El Tarabishi ID Generator</h2>
+    <form id="studentForm">
+      <label for="name">الاسم الكامل:</label>
+      <input type="text" id="name" name="الاسم الكامل" required />
 
-<div class="form-container">
-  <h2>El Tarabishi ID Generator</h2>
-  <p class="note">✨ خليك مميز واطبع بطاقتك بنفسك!</p>
-
-  <form id="studentForm">
-    <label>الاسم الكامل:<br><input type="text" id="name" required></label><br>
-    <label>المرحلة التعليمية:<br>
-      <select id="education" required>
+      <label for="education">المرحلة التعليمية:</label>
+      <select id="education" name="المرحلة التعليمية" required>
         <option value="">-- اختر المرحلة --</option>
         <option value="ابتدائية">ابتدائية</option>
         <option value="إعدادية">إعدادية</option>
@@ -120,96 +109,112 @@
         <option value="كلية">كلية</option>
         <option value="فري لانسر">فري لانسر</option>
       </select>
-    </label><br>
-    <label>رقم الهاتف:<br><input type="text" id="phone" required></label><br>
-    <label>صورة شخصية:<br><input type="file" id="photo" accept="image/*" required></label><br>
-    <button type="submit">📩 إرسال البيانات وعرض البطاقة</button>
-  </form>
-  <div class="success-msg" id="msg"></div>
-</div>
 
-<div id="cardOutput"></div>
+      <label for="phone">رقم الهاتف:</label>
+      <input type="tel" id="phone" name="رقم الهاتف" required pattern="[0-9]{10,}" title="رقم الهاتف لازم يكون أرقام فقط و10 أرقام على الأقل" />
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script>
-  const form = document.getElementById('studentForm');
-  const msg = document.getElementById('msg');
+      <label for="photo">صورة شخصية:</label>
+      <input type="file" id="photo" accept="image/*" required />
 
-  form.addEventListener('submit', async function(e) {
-    e.preventDefault();
+      <button type="submit">📩 إرسال البيانات و عرض البطاقة</button>
+    </form>
+  </div>
 
-    const name = document.getElementById('name').value;
-    const education = document.getElementById('education').value;
-    const phone = document.getElementById('phone').value;
-    const photoInput = document.getElementById('photo');
+  <div id="cardOutput"></div>
 
-    if (!photoInput.files.length) {
-      msg.innerText = "❌ من فضلك أرفق صورة.";
-      return;
-    }
+  <script>
+    const form = document.getElementById('studentForm');
 
-    const photo = photoInput.files[0];
-    const reader = new FileReader();
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
 
-    reader.onload = async function(event) {
-      const imgData = event.target.result;
+      const name = document.getElementById('name').value;
+      const education = document.getElementById('education').value;
+      const phone = document.getElementById('phone').value;
+      const photoInput = document.getElementById('photo');
 
-      // عرض البطاقة
-      const studentId = Math.floor(100000 + Math.random() * 900000);
-      const cardHTML = `
-        <div class="id-card" id="studentCard">
-          <div class="logo">مبادرة El Tarabishi</div>
-          <img src="${imgData}" alt="Student Photo" />
-          <div class="id-info">
-            <h3>${name}</h3>
-            <p>📘 المرحلة التعليمية: ${education}</p>
-            <p>📱 رقم الهاتف: ${phone}</p>
-            <p>🆔 ID: ${studentId}</p>
+      // Validate photo input
+      if (!photoInput.files.length) {
+        alert("❌ من فضلك أرفق صورة");
+        return;
+      }
+
+      // Validate phone number
+      if (!/^[0-9]{10,}$/.test(phone)) {
+        alert("📵 من فضلك أدخل رقم هاتف صحيح يحتوي على أرقام فقط ويكون 10 أرقام أو أكثر.");
+        return;
+      }
+
+      // Validate file size (max 10MB for formsubmit.co)
+      if (photoInput.files[0].size > 10 * 1024 * 1024) {
+        alert("❌ حجم الصورة كبير جدًا، يرجى اختيار صورة أقل من 10 ميجابايت.");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        const imgData = event.target.result;
+        const studentId = Math.floor(100000 + Math.random() * 900000);
+
+        // Render the ID card
+        const cardHTML = `
+          <div class="id-card" id="studentCard">
+            <div class="logo">مبادرة El Tarabishi</div>
+            <img src="${imgData}" alt="Student Photo" />
+            <div class="id-info">
+              <h3>${name}</h3>
+              <p>📘 المرحلة التعليمية: ${education}</p>
+              <p>📱 رقم الهاتف: ${phone}</p>
+              <p>🆔 ID: ${studentId}</p>
+            </div>
           </div>
-        </div>
-        <button id="downloadBtn">تحميل البطاقة</button>
-      `;
-      document.getElementById('cardOutput').innerHTML = cardHTML;
+          <button id="downloadBtn">تحميل البطاقة</button>
+        `;
+        document.getElementById('cardOutput').innerHTML = cardHTML;
 
-      // تحميل البطاقة
-      document.getElementById('downloadBtn').addEventListener('click', function() {
-        const card = document.getElementById('studentCard');
-        html2canvas(card, { scale: 2 }).then(canvas => {
-          const link = document.createElement('a');
-          link.download = 'بطاقة_الطالب.png';
-          link.href = canvas.toDataURL('image/png');
-          link.click();
+        // Download button functionality
+        document.getElementById('downloadBtn').addEventListener('click', function () {
+          const card = document.getElementById('studentCard');
+          html2canvas(card, { scale: 2 }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = 'بطاقة_الطالب.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+          });
         });
-      });
 
-      msg.innerText = "✅ تم إنشاء البطاقة بنجاح!";
+        // Prepare FormData for submission
+        const formData = new FormData();
+        formData.append("الاسم_الكامل", name);
+        formData.append("المرحلة_التعليمية", education);
+        formData.append("رقم_الهاتف", phone);
+        formData.append("صورة_شخصية", photoInput.files[0]);
+        formData.append("_captcha", "false");
+        formData.append("_template", "table");
 
-      // إرسال البيانات إلى Airtable
-      try {
-        await fetch("https://api.airtable.com/v0/appAq09XRhB6pwHJt/El%20Tarabishi%20Students", {
+        // Send data to formsubmit.co
+        fetch("https://formsubmit.co/ajax/3bdallah7assan123@gmail.com", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer patQVptqO6E4nWYBj.a6daf88e5e99bdaf4c051ddc27c7963aafbad42514324f8dbb1bc1c54e437acb"
-          },
-          body: JSON.stringify({
-            "fields": {
-              "الاسم الكامل": name,
-              "المرحلة التعليمية": education,
-              "رقم الهاتف": phone,
-              "Base64 Photo": imgData
+          body: formData,
+        })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success === "true") {
+              console.log("✅ تم إرسال البيانات والصورة بنجاح");
+              alert("✅ تم إرسال البيانات والصورة بنجاح!");
+            } else {
+              console.error("❌ فشل إرسال البيانات:", data.message);
+              alert("❌ فشل إرسال البيانات: " + data.message);
             }
           })
-        });
-        console.log("✅ تم إرسال البيانات إلى Airtable");
-      } catch (error) {
-        console.error("❌ فشل إرسال البيانات إلى Airtable", error);
-      }
-    };
+          .catch(err => {
+            console.error("❌ حصل خطأ في الإرسال:", err);
+            alert("❌ حصل خطأ في الإرسال: " + err.message);
+          });
+      };
 
-    reader.readAsDataURL(photo);
-  });
-</script>
-
+      reader.readAsDataURL(photoInput.files[0]);
+    });
+  </script>
 </body>
 </html>
