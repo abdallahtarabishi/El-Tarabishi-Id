@@ -4,71 +4,144 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>El Tarabishi ID Generator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet" />
   <style>
     body {
-      font-family: sans-serif;
-      background: #1c1c2b;
-      color: #fff;
+      font-family: 'Cairo', sans-serif;
+      background: linear-gradient(135deg, #1c1c2b, #2a2a40);
+      padding: 20px;
       text-align: center;
       direction: rtl;
-      padding: 20px;
+      color: #fff;
+      margin: 0;
     }
     .form-container {
       background: #2f2f48;
       padding: 25px;
-      border-radius: 15px;
-      width: 90%;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
       max-width: 400px;
       margin: auto;
     }
-    input, select {
-      width: 100%;
-      margin-bottom: 15px;
+    .form-container input,
+    .form-container select {
       padding: 10px;
-      border-radius: 8px;
-      border: none;
-      background: #444;
-      color: white;
+      margin: 5px 0 15px;
+      width: 100%;
+      border: 1px solid #666;
+      border-radius: 10px;
+      font-size: 16px;
+      background-color: #444;
+      color: #fff;
     }
-    button {
+    .form-container button {
+      padding: 12px 24px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .form-container button:hover {
+      background-color: #43a047;
+    }
+    .id-card {
+      background: #2e2e3e;
+      border: 2px solid #4CAF50;
+      border-radius: 15px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 320px;
+      margin: 30px auto;
+      color: #fff;
+    }
+    .id-card img {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 3px solid #4CAF50;
+      margin: 15px 0;
+    }
+    .id-info {
+      text-align: center;
+    }
+    .logo {
+      font-weight: bold;
+      font-size: 24px;
+      color: #4CAF50;
+    }
+    .id-info h3 {
+      margin: 5px 0;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .id-info p {
+      margin: 4px 0;
+      font-size: 14px;
+    }
+    #downloadBtn {
+      margin-top: 15px;
+      background-color: #2196F3;
+      color: white;
+      border: none;
       padding: 10px 20px;
       border-radius: 10px;
-      border: none;
-      background: #4CAF50;
-      color: white;
-      font-size: 16px;
       cursor: pointer;
+      font-size: 16px;
     }
-    .success-msg { margin-top: 20px; color: #8BC34A; }
+    #downloadBtn:hover {
+      background-color: #1976D2;
+    }
+    .note {
+      margin-bottom: 15px;
+      font-size: 15px;
+      color: #f0f0a8;
+    }
   </style>
 </head>
 <body>
 
   <div class="form-container">
-    <h2>تسجيل الطالب</h2>
-    <form id="studentForm">
-      <input type="text" id="name" placeholder="الاسم الكامل" required />
-      <select id="education" required>
-        <option value="">-- اختر المرحلة --</option>
-        <option value="ابتدائية">ابتدائية</option>
-        <option value="إعدادية">إعدادية</option>
-        <option value="ثانوية">ثانوية</option>
-        <option value="كلية">كلية</option>
-        <option value="فري لانسر">فري لانسر</option>
-      </select>
-      <input type="text" id="phone" placeholder="رقم الهاتف" required />
-      <input type="file" id="photo" accept="image/*" required />
-      <button type="submit">📩 إرسال البيانات</button>
+    <h2>El Tarabishi ID Generator</h2>
+    <p class="note">✨ خليك مميز واطبع بطاقتك بنفسك!</p>
+
+    <form id="studentForm" action="https://formspree.io/f/xzzvpklr" method="POST" enctype="multipart/form-data" target="hiddenFrame">
+      <input type="hidden" name="_captcha" value="false" />
+      <input type="hidden" name="_template" value="table" />
+      <input type="hidden" name="_next" value="about:blank" />
+      
+      <label>الاسم الكامل:<br><input type="text" name="الاسم الكامل" id="name" required></label><br>
+      <label>المرحلة التعليمية:<br>
+        <select name="المرحلة التعليمية" id="education" required>
+          <option value="">-- اختر المرحلة --</option>
+          <option value="ابتدائية">ابتدائية</option>
+          <option value="إعدادية">إعدادية</option>
+          <option value="ثانوية">ثانوية</option>
+          <option value="كلية">كلية</option>
+          <option value="فري لانسر">فري لانسر</option>
+        </select>
+      </label><br>
+      <label>رقم الهاتف:<br><input type="text" name="رقم الهاتف" id="phone" required></label><br>
+      <label>صورة شخصية:<br><input type="file" name="صورة شخصية" id="photo" accept="image/*" required></label><br>
+      <button type="submit">📩 إرسال البيانات وعرض البطاقة</button>
     </form>
+    <iframe name="hiddenFrame" style="display:none;"></iframe>
     <div class="success-msg" id="msg"></div>
   </div>
 
+  <div id="cardOutput"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script>
     const form = document.getElementById('studentForm');
     const msg = document.getElementById('msg');
 
-    form.addEventListener('submit', async function (e) {
-      e.preventDefault();
+    form.addEventListener('submit', function(e) {
+      e.preventDefault(); // نمنع التحويل ونكمل شغلنا
 
       const name = document.getElementById('name').value;
       const education = document.getElementById('education').value;
@@ -76,68 +149,51 @@
       const photoInput = document.getElementById('photo');
 
       if (!photoInput.files.length) {
-        msg.innerText = "❌ من فضلك أرفق صورة";
+        msg.innerText = "❌ من فضلك قم بإرفاق صورة.";
         return;
       }
 
-      const file = photoInput.files[0];
+      const photo = photoInput.files[0];
+      const studentId = Math.floor(100000 + Math.random() * 900000);
       const reader = new FileReader();
 
-      reader.onloadend = async function () {
-        const base64Image = reader.result;
+      reader.onload = function(event) {
+        const imgData = event.target.result;
 
-        // ✅ رفع الصورة على imgbb
-        const imgbbApiKey = "952b453a5ea915898d97c38e44d08e3f";
-        const formDataImg = new FormData();
-        formDataImg.append("image", base64Image.split(",")[1]);
+        const cardHTML = `
+          <div class="id-card" id="studentCard">
+            <div class="logo">مبادرة El Tarabishi</div>
+            <img src="${imgData}" alt="Student Photo" />
+            <div class="id-info">
+              <h3>${name}</h3>
+              <p>📘 المرحلة التعليمية: ${education}</p>
+              <p>📱 رقم الهاتف: ${phone}</p>
+              <p>🆔 ID: ${studentId}</p>
+            </div>
+          </div>
+          <button id="downloadBtn">تحميل البطاقة</button>
+        `;
+        document.getElementById('cardOutput').innerHTML = cardHTML;
 
-        try {
-          const uploadRes = await fetch(`https://api.imgbb.com/1/upload?key=${imgbbApiKey}`, {
-            method: "POST",
-            body: formDataImg
+        document.getElementById('downloadBtn').addEventListener('click', function () {
+          const card = document.getElementById('studentCard');
+          html2canvas(card, { scale: 2 }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = 'بطاقة_الطالب.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
           });
+        });
 
-          const uploadData = await uploadRes.json();
-          const imageUrl = uploadData.data.url;
-
-          // ✅ إرسال البيانات لـ Airtable
-          const airtableUrl = 'https://api.airtable.com/v0/appAq09XRhB6pwHJt/El%20Tarabishi%20Students';
-          const airtableToken = 'pat1sbqKdApi5Ws5b.9011151ceda19eb50b466bd348b6e26bb21b7879b950e96d1223f3c03d7f83cd';
-
-          const payload = {
-            records: [{
-              fields: {
-                "الاسم الكامل": name,
-                "المرحلة التعليمية": education,
-                "رقم الهاتف": phone,
-                "صورة": [{ url: imageUrl }]
-              }
-            }]
-          };
-
-          const response = await fetch(airtableUrl, {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${airtableToken}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-          });
-
-          if (response.ok) {
-            msg.innerText = "✅ تم تسجيل البيانات بنجاح!";
-            form.reset();
-          } else {
-            msg.innerText = "❌ حصل خطأ أثناء إرسال البيانات.";
-          }
-
-        } catch (error) {
-          msg.innerText = "❌ فشل رفع الصورة.";
-          console.error("Upload error:", error);
-        }
+        msg.innerText = "✅ تم إنشاء البطاقة وإرسال البيانات!";
       };
 
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(photo);
+
+      // ⬇️ إرسال البيانات والصورة على Formspree
+      setTimeout(() => {
+        form.submit();
+      }, 500); // تأخير بسيط علشان البطاقة تظهر قبل الإرسال
     });
   </script>
 
