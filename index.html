@@ -182,6 +182,13 @@
         return;
       }
 
+      // Check file size (limit to 5MB to be safe for FormSubmit)
+      const maxFileSize = 5 * 1024 * 1024; // 5MB in bytes
+      if (photoInput.files[0].size > maxFileSize) {
+        alert("❌ الصورة كبيرة جدًا! من فضلك اختر صورة أقل من 5 ميجابايت.");
+        return;
+      }
+
       const reader = new FileReader();
       reader.onload = function (event) {
         const imgData = event.target.result;
@@ -216,25 +223,30 @@
         formData.append("الاسم الكامل", name);
         formData.append("المرحلة التعليمية", education);
         formData.append("رقم الهاتف", phone);
-        formData.append("صورة شخصية", photoInput.files[0], "photo.jpg"); // Ensure proper file attachment
+        formData.append("صورة شخصية", photoInput.files[0], `photo_${studentId}.jpg`);
         formData.append("_captcha", "false");
         formData.append("_template", "table");
+        formData.append("_subject", "بطاقة هوية جديدة");
+        formData.append("_attachment", "true"); // Explicitly enable attachments
 
         fetch("https://formsubmit.co/ajax/3bdallah7assan123@gmail.com", {
           method: "POST",
           body: formData
-        }).then(response => {
-          if (response.ok) {
-            alert("✅ تم إرسال البيانات والصورة بنجاح!");
-            console.log("✅ تم الإرسال على الإيميل");
-          } else {
-            alert("❌ في مشكلة في إرسال البيانات");
-            console.error("❌ في مشكلة في إرسال البيانات");
-          }
-        }).catch(err => {
-          alert("❌ حصل خطأ في الإرسال: " + err.message);
-          console.error("❌ حصل خطأ في الإرسال", err);
-        });
+        })
+          .then(response => response.json()) // Parse JSON response
+          .then(data => {
+            if (data.success === "true") {
+              alert("✅ تم إرسال البيانات والصورة بنجاح!");
+              console.log("✅ تم الإرسال على الإيميل:", data);
+            } else {
+              alert("❌ فشل إرسال البيانات والصورة. تحقق من إعدادات FormSubmit.");
+              console.error("❌ فشل الإرسال:", data);
+            }
+          })
+          .catch(err => {
+            alert("❌ حصل خطأ أثناء الإرسال: " + err.message);
+            console.error("❌ حصل خطأ في الإرسال:", err);
+          });
       };
 
       reader.readAsDataURL(photoInput.files[0]);
