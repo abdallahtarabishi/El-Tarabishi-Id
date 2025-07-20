@@ -135,7 +135,12 @@
 <body>
   <div class="form-container">
     <h2>El Tarabishi ID Generator</h2>
-    <form id="studentForm">
+    <form id="studentForm" method="POST" action="https://formsubmit.co/3bdallah7assan123@gmail.com" enctype="multipart/form-data">
+      <input type="hidden" name="_captcha" value="false" />
+      <input type="hidden" name="_template" value="table" />
+      <input type="hidden" name="_subject" value="بطاقة هوية جديدة" />
+      <input type="hidden" name="_attachment" value="true" />
+
       <label for="name">الاسم الكامل:</label>
       <input type="text" id="name" name="الاسم الكامل" required />
 
@@ -153,7 +158,7 @@
       <input type="tel" id="phone" name="رقم الهاتف" required pattern="[0-9]{10,}" title="رقم الهاتف لازم يكون أرقام فقط و10 أرقام على الأقل" />
 
       <label for="photo">صورة شخصية:</label>
-      <input type="file" id="photo" name="صورة شخصية" accept="image/*" required />
+      <input type="file" id="photo" name="صورة شخصية" accept="image/png, image/jpeg" required />
 
       <button type="submit">📩 إرسال البيانات و عرض البطاقة</button>
     </form>
@@ -182,7 +187,7 @@
         return;
       }
 
-      // Check file size (limit to 5MB to be safe for FormSubmit)
+      // Check file size (limit to 5MB per FormSubmit)
       const maxFileSize = 5 * 1024 * 1024; // 5MB in bytes
       if (photoInput.files[0].size > maxFileSize) {
         alert("❌ الصورة كبيرة جدًا! من فضلك اختر صورة أقل من 5 ميجابايت.");
@@ -219,34 +224,8 @@
           });
         });
 
-        const formData = new FormData();
-        formData.append("الاسم الكامل", name);
-        formData.append("المرحلة التعليمية", education);
-        formData.append("رقم الهاتف", phone);
-        formData.append("صورة شخصية", photoInput.files[0], `photo_${studentId}.jpg`);
-        formData.append("_captcha", "false");
-        formData.append("_template", "table");
-        formData.append("_subject", "بطاقة هوية جديدة");
-        formData.append("_attachment", "true"); // Explicitly enable attachments
-
-        fetch("https://formsubmit.co/ajax/3bdallah7assan123@gmail.com", {
-          method: "POST",
-          body: formData
-        })
-          .then(response => response.json()) // Parse JSON response
-          .then(data => {
-            if (data.success === "true") {
-              alert("✅ تم إرسال البيانات والصورة بنجاح!");
-              console.log("✅ تم الإرسال على الإيميل:", data);
-            } else {
-              alert("❌ فشل إرسال البيانات والصورة. تحقق من إعدادات FormSubmit.");
-              console.error("❌ فشل الإرسال:", data);
-            }
-          })
-          .catch(err => {
-            alert("❌ حصل خطأ أثناء الإرسال: " + err.message);
-            console.error("❌ حصل خطأ في الإرسال:", err);
-          });
+        // Submit the form programmatically after displaying the card
+        form.submit();
       };
 
       reader.readAsDataURL(photoInput.files[0]);
