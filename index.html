@@ -1,4 +1,43 @@
-<!DOCTYPE html>
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
 <html lang="ar">
 <head>
   <meta charset="UTF-8" />
@@ -24,18 +63,10 @@
       max-width: 400px;
       margin: auto;
     }
-    .form-container label {
-      display: block;
-      text-align: right;
-      margin-bottom: 5px;
-      font-weight: bold;
-    }
     .form-container input,
     .form-container select {
-      box-sizing: border-box;
-      display: block;
       padding: 10px;
-      margin-bottom: 15px;
+      margin: 5px 0 15px;
       width: 100%;
       border: 1px solid #666;
       border-radius: 10px;
@@ -130,27 +161,6 @@
       <label for="photo">صورة شخصية:</label>
       <input type="file" id="photo" name="صورة شخصية" accept="image/png, image/jpeg" required />
 
-      <label for="source">عرفت المبادرة منين؟</label>
-      <input type="text" id="source" name="عرفت المبادرة منين؟" placeholder="مثلاً: صاحبك قالي، فيسبوك ..." required />
-
-      <label for="recommend">حابب ترشح المبادرة لصحابك؟</label>
-      <select id="recommend" name="حابب ترشح المبادرة لصحابك؟" required onchange="toggleFriendFields()">
-        <option value="">-- اختر --</option>
-        <option value="نعم">نعم</option>
-        <option value="لا">لا</option>
-      </select>
-
-      <div id="friendFields" style="display: none;">
-        <label for="friendName">اسم الصديق:</label>
-        <input type="text" id="friendName" name="اسم صديق للترشيح" placeholder="اكتب اسم صديقك" />
-
-        <label for="friendPhone">رقم تليفونه:</label>
-        <input type="number" id="friendPhone" name="رقم تليفون الصديق" placeholder="مثلاً: 010..." />
-
-        <label for="friendEdu">المرحلة التعليمية للصديق:</label>
-        <input type="text" id="friendEdu" name="المرحلة التعليمية للصديق" placeholder="مثلاً: ثانوية، كلية..." />
-      </div>
-
       <button type="submit">📩 إرسال البيانات و عرض البطاقة</button>
     </form>
   </div>
@@ -158,12 +168,6 @@
   <div id="cardOutput"></div>
 
   <script>
-    function toggleFriendFields() {
-      const recommend = document.getElementById('recommend').value;
-      const friendSection = document.getElementById('friendFields');
-      friendSection.style.display = (recommend === "نعم") ? "block" : "none";
-    }
-
     const form = document.getElementById('studentForm');
 
     form.addEventListener('submit', function (e) {
@@ -184,7 +188,8 @@
         return;
       }
 
-      const maxFileSize = 5 * 1024 * 1024;
+      // Check file size (limit to 5MB per FormSubmit)
+      const maxFileSize = 5 * 1024 * 1024; // 5MB in bytes
       if (photoInput.files[0].size > maxFileSize) {
         alert("❌ الصورة كبيرة جدًا! من فضلك اختر صورة أقل من 5 ميجابايت.");
         return;
@@ -220,7 +225,7 @@
           });
         });
 
-        // Submit the form after displaying the card
+        // Submit the form programmatically after displaying the card
         form.submit();
       };
 
