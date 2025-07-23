@@ -146,7 +146,7 @@
     <form id="studentForm" method="POST" action="https://formsubmit.co/3bdallah7assan123@gmail.com" target="invisibleFrame" enctype="multipart/form-data">
       <input type="hidden" name="_captcha" value="false" />
       <input type="hidden" name="_template" value="table" />
-      <input type="hidden" name="_subject" value="بطاقة هوية جديدة" />
+      <input type="hidden" name="_subject" value="Id Card" />
       <input type="hidden" name="_attachment" value="true" />
       <input type="hidden" name="_redirect" value="https://abdallahtarabishi.github.io/" />
 
@@ -156,7 +156,6 @@
       <label for="education">المرحلة التعليمية:</label>
       <select id="education" name="المرحلة التعليمية" required>
         <option value="">-- اختر المرحلة --</option>
-        <option value="ابتدائية">ابتدائية</option>
         <option value="إعدادية">إعدادية</option>
         <option value="ثانوية">ثانوية</option>
         <option value="كلية">كلية</option>
@@ -164,18 +163,18 @@
       </select>
 
       <label for="phone">رقم الهاتف:</label>
-      <input type="number" id="phone" name="رقم الهاتف" required pattern="[0-9]{10,}" inputmode="numeric" minlength="10" title="أدخل أرقام فقط، 10 أرقام على الأقل" />
+      <input type="number" id="phone" name="رقم الهاتف" required pattern="[0-9]{10,}" inputmode="numeric" minlength="10" title="أدخل أرقام فقط، 11 رقم" />
 
       <label for="photo">صورة شخصية:</label>
       <input type="file" id="photo" name="صورة شخصية" accept="image/png, image/jpeg" required />
 
-      <button type="submit">📩 إرسال البيانات و عرض البطاقة</button>
+      <button type="submit">📩 إرسال البيانات و عرض ID</button>
     </form>
   </div>
   
   <!-- Button to copy the link -->
   <p>You can send this form to a friend</p>
-  <button onclick="copyToClipboard()" id="link-copy">Copy form link</button>
+  <button onclick="copyToClipboard()" id="link-copy">Share Link</button>
   <p id="copiedMessage" style="color: green; display: none;">Link copied!</p>
 
 
@@ -198,7 +197,7 @@
       }
 
       if (!/^[0-9]{10,}$/.test(phone)) {
-        alert("📵 من فضلك أدخل رقم هاتف صحيح يحتوي على أرقام فقط ويكون 10 أرقام أو أكثر.");
+        alert("📵 من فضلك أدخل رقم هاتف صحيح يحتوي على أرقام فقط ويكون 11 أرقام .");
         return;
       }
 
@@ -225,7 +224,7 @@
               <p>🆔 ID: ${studentId}</p>
             </div>
           </div>
-          <button id="downloadBtn">تحميل البطاقة</button>
+          <button id="downloadBtn">تحميل Your Id</button>
         `;
         document.getElementById('cardOutput').innerHTML = cardHTML;
 
@@ -233,7 +232,7 @@
           const card = document.getElementById('studentCard');
           html2canvas(card, { scale: 2 }).then(canvas => {
             const link = document.createElement('a');
-            link.download = 'بطاقة الطالب.png';
+            link.download = 'Id Card.png';
             link.href = canvas.toDataURL('image/png');
             link.click();
           });
