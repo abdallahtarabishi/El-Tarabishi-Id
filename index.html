@@ -1,43 +1,4 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar">
 <head>
   <meta charset="UTF-8" />
@@ -55,6 +16,7 @@
       color: #fff;
       margin: 0;
     }
+
     .form-container {
       background: #2f2f48;
       padding: 25px;
@@ -64,6 +26,7 @@
       margin: auto;
       z-index: 10;
     }
+
     .form-container input,
     .form-container select {
       padding: 10px;
@@ -75,72 +38,117 @@
       background-color: #444;
       color: #fff;
     }
+
     button {
-      width: 100%;
       padding: 12px;
       background-color: #4CAF50;
       color: white;
       border: none;
       border-radius: 10px;
       cursor: pointer;
-      font-size: 17px;
-      transition: background-color 0.3s ease;
-    }
-    button:hover {
-      background-color: #43a047;
-    }
-    .id-card {
-      background: #2e2e3e;
-      border: 2px solid #4CAF50;
-      border-radius: 15px;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      max-width: 320px;
-      margin: 30px auto;
-      text-align: center;
-    }
-    .id-card img {
-      width: 120px;
-      height: 120px;
-      object-fit: cover;
-      border-radius: 10px;
-      border: 3px solid #4CAF50;
-      margin: 15px 0;
-    }
-    .id-info h3 {
-      margin: 5px 0;
-      font-size: 20px;
-    }
-    .id-info p {
-      margin: 4px 0;
-      font-size: 14px;
-    }
-    #downloadBtn {
-      margin-top: 15px;
-      background-color: #2196F3;
-      color: white;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 10px;
-      cursor: pointer;
       font-size: 16px;
       transition: background-color 0.3s ease;
     }
-    #downloadBtn:hover {
-      background-color: #1976D2;
+
+    button:hover {
+      background-color: #43a047;
     }
-    #link-copy{
-      display: block;
-      width: 150px;
-      margin: auto;
-      margin-top: 10px;
+
+    .id-card {
+      position: relative;
+      background: linear-gradient(135deg, #1b1b2f, #162447);
+      border-radius: 20px;
+      padding: 25px;
+      color: #fff;
+      box-shadow: 0 0 25px rgba(0,0,0,0.7);
+      overflow: hidden;
+      max-width: 350px;
+      margin: 30px auto;
+      text-align: center;
+    }
+
+    .id-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -50%;
+      width: 200%;
+      height: 100%;
+      background: url('https://www.transparenttextures.com/patterns/stardust.png');
+      opacity: 0.08;
+      z-index: 0;
+    }
+
+    .id-card .logo {
+      font-weight: bold;
+      font-size: 18px;
+      background: linear-gradient(90deg, #4CAF50, #00e676);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+      z-index: 1;
+      position: relative;
+    }
+
+    .id-card img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 4px solid #00e676;
+      box-shadow: 0 0 15px rgba(0, 230, 118, 0.6);
+      margin: 10px 0;
+      z-index: 1;
+      position: relative;
+    }
+
+    .id-info {
+      z-index: 1;
+      position: relative;
+    }
+
+    .id-info h3 {
+      margin: 10px 0 5px;
+      font-size: 22px;
+      color: #00e676;
+    }
+
+    .id-info p {
+      margin: 4px 0;
+      font-size: 14px;
+      color: #ccc;
+    }
+
+    #downloadBtn {
+      margin-top: 15px;
+      background-color: #00c853;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 15px;
+    }
+
+    #downloadBtn:hover {
+      background-color: #00b248;
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 15px;
+    }
+
+    #copiedMessage {
+      color: #4CAF50;
+      margin-top: 5px;
     }
   </style>
 </head>
 <body>
   <iframe name="invisibleFrame" style="display:none;"></iframe>
+
   <div class="form-container">
     <h2>El Tarabishi ID Generator</h2>
     <form id="studentForm" method="POST" action="https://formsubmit.co/3bdallah7assan123@gmail.com" target="invisibleFrame" enctype="multipart/form-data">
@@ -168,15 +176,20 @@
       <label for="photo">صورة شخصية:</label>
       <input type="file" id="photo" name="صورة شخصية" accept="image/png, image/jpeg" required />
 
-      <button type="submit">📩 إرسال البيانات و عرض ID</button>
+      <button type="submit" style="width: 100%;">📩 إرسال البيانات و عرض ID</button>
     </form>
   </div>
-  
-  <!-- Button to copy the link -->
-  <p>You can send this form to a friend</p>
-  <button onclick="copyToClipboard()" id="link-copy">Share Link</button>
-  <p id="copiedMessage" style="color: green; display: none;">Link copied!</p>
 
+  <!-- الأزرار الثلاثة -->
+  <div style="margin-top: 20px;">
+    <p>يمكنك إرسال هذا النموذج لصديق أو تصفح موقعنا</p>
+    <div class="button-group">
+      <button onclick="copyToClipboard()" id="link-copy">🔗 Share Link</button>
+      <button onclick="window.open('https://abdallahtarabishi.github.io', '_blank')">🌐 My Web Site</button>
+      <button onclick="window.open('https://forms.gle/teygk3wyRvWX4YhT9', '_blank')">📍 تفقد الأماكن المتعاقدة</button>
+    </div>
+    <p id="copiedMessage" style="display: none;">✔️ تم نسخ الرابط!</p>
+  </div>
 
   <div id="cardOutput"></div>
 
@@ -197,12 +210,11 @@
       }
 
       if (!/^[0-9]{10,}$/.test(phone)) {
-        alert("📵 من فضلك أدخل رقم هاتف صحيح يحتوي على أرقام فقط ويكون 11 أرقام .");
+        alert("📵 من فضلك أدخل رقم هاتف صحيح يحتوي على أرقام فقط ويكون 11 رقم.");
         return;
       }
 
-      // Check file size (limit to 5MB per FormSubmit)
-      const maxFileSize = 5 * 1024 * 1024; // 5MB in bytes
+      const maxFileSize = 5 * 1024 * 1024;
       if (photoInput.files[0].size > maxFileSize) {
         alert("❌ الصورة كبيرة جدًا! من فضلك اختر صورة أقل من 5 ميجابايت.");
         return;
@@ -238,31 +250,24 @@
           });
         });
 
-        // Submit the form programmatically after displaying the card
         form.submit();
       };
 
       reader.readAsDataURL(photoInput.files[0]);
     });
-  
-  function copyToClipboard() {
-    const link = "https://abdallahtarabishi.github.io/El-Tarabishi-Id/";
 
-    navigator.clipboard.writeText(link)
-      .then(() => {
-        // Show confirmation message
-        const msg = document.getElementById("copiedMessage");
-        msg.style.display = "block";
-
-        // Hide after 2 seconds
-        setTimeout(() => {
-          msg.style.display = "none";
-        }, 2000);
-      })
-      .catch(err => {
-        console.error("Failed to copy: ", err);
-      });
-  }
+    function copyToClipboard() {
+      const link = "https://abdallahtarabishi.github.io/El-Tarabishi-Id/";
+      navigator.clipboard.writeText(link)
+        .then(() => {
+          const msg = document.getElementById("copiedMessage");
+          msg.style.display = "block";
+          setTimeout(() => { msg.style.display = "none"; }, 2000);
+        })
+        .catch(err => {
+          console.error("Failed to copy: ", err);
+        });
+    }
   </script>
 </body>
 </html>
